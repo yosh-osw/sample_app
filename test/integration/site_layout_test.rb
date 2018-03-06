@@ -1,9 +1,6 @@
 require 'test_helper'
 
 class SiteLayoutTest < ActionDispatch::IntegrationTest
-  # test "the truth" do
-  #   assert true
-  # end
   test 'layout links' do
     get root_path
     assert_template 'static_pages/home'
@@ -20,5 +17,19 @@ class SiteLayoutTest < ActionDispatch::IntegrationTest
   test 'full title helper' do
     assert_equal full_title, 'Ruby on Rails Tutorial Sample App'
     assert_equal full_title('Help'), 'Help | Ruby on Rails Tutorial Sample App'
+  end
+
+  def setup
+    @user = users(:michael)
+  end
+
+  test "layout links when logged in" do
+    log_in_as(@user)
+    get root_path
+    assert_template 'static_pages/home'
+    assert_select "a[href=?]", users_path
+    assert_select "a[href=?]", user_path(@user)
+    assert_select "a[href=?]", edit_user_path(@user)
+    assert_select "a[href=?]", logout_path
   end
 end
